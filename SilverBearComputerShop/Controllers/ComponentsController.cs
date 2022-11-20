@@ -22,8 +22,8 @@ namespace SilverBearComputerShop.Controllers
         // GET: Components
         public async Task<IActionResult> Index()
         {
-            var computerShopContext = _context.Component.Include(c => c.ComponentType);
-            return View(await computerShopContext.ToListAsync());
+            var component = _context.Component.Include(c => c.ComponentType);
+            return View(await component.ToListAsync());
         }
 
         // GET: Components/Details/5
@@ -48,7 +48,7 @@ namespace SilverBearComputerShop.Controllers
         // GET: Components/Create
         public IActionResult Create()
         {
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "ID");
+            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace SilverBearComputerShop.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,ComponentTypeId")] Component component)
+        public async Task<IActionResult> Create([Bind("Name,ComponentTypeId")] Component component)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace SilverBearComputerShop.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "ID", component.ComponentTypeId);
+            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type", component.ComponentTypeId);
             return View(component);
         }
 
@@ -82,7 +82,7 @@ namespace SilverBearComputerShop.Controllers
             {
                 return NotFound();
             }
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "ID", component.ComponentTypeId);
+            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type", component.ComponentTypeId);
             return View(component);
         }
 
@@ -118,7 +118,7 @@ namespace SilverBearComputerShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "ID", component.ComponentTypeId);
+            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type", component.ComponentTypeId);
             return View(component);
         }
 
