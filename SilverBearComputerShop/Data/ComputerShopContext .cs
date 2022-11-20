@@ -5,7 +5,7 @@ namespace SilverBearComputerShop.Data
 {
     public class ComputerShopContext : DbContext
     {
-        public ComputerShopContext(DbContextOptions<ComputerShopContext> options) : base(options)
+		public ComputerShopContext(DbContextOptions<ComputerShopContext> options) : base(options)
         {
         }
 
