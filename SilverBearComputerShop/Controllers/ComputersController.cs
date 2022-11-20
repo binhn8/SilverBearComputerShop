@@ -20,9 +20,54 @@ namespace SilverBearComputerShop.Controllers
         }
 
         // GET: Computers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+                string sortOrder,
+                string currentFilter,
+                string searchString,
+                int? pageNumber)
         {
-            return View(await _context.Computer.ToListAsync());
+            ViewData["WeightSortParm"] = String.IsNullOrEmpty(sortOrder) ? "weight_desc" : "";
+            ViewData["TitleSortParm"] = sortOrder == "Title" ? "title_desc" : "Title";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var computers = from s in _context.Computer
+                            select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                computers = computers.Where(s => s.Title.Contains(searchString)
+                                       || s.Description.Contains(searchString));
+                
+            }
+			
+			switch (sortOrder)
+            {
+                case "weight_desc":
+                    computers = computers.OrderByDescending(s => s.Weight);
+                    break;
+                case "Title":
+                    computers = computers.OrderBy(s => s.Title);
+                    break;
+                case "title_desc":
+                    computers = computers.OrderByDescending(s => s.Title);
+                    break;
+                default:
+                    computers = computers.OrderBy(s => s.Weight);
+                    break;
+            }
+
+            int pageSize = 3;
+            return View(await PaginatedList<Computer>.CreateAsync(computers.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Computers/Details/5
@@ -59,13 +104,23 @@ namespace SilverBearComputerShop.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Weight,Title,Description")] Computer computer)
+        public async Task<IActionResult> Create([Bind("Weight,Title,Description")] Computer computer)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(computer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(computer);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists " +
+                    "see your system administrator.");
             }
             return View(computer);
         }
@@ -122,7 +177,7 @@ namespace SilverBearComputerShop.Controllers
         }
 
         // GET: Computers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
@@ -130,10 +185,18 @@ namespace SilverBearComputerShop.Controllers
             }
 
             var computer = await _context.Computer
+                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (computer == null)
             {
                 return NotFound();
+            }
+
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] =
+                    "Delete failed. Try again, and if the problem persists " +
+                    "see your system administrator.";
             }
 
             return View(computer);
@@ -145,9 +208,21 @@ namespace SilverBearComputerShop.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var computer = await _context.Computer.FindAsync(id);
-            _context.Computer.Remove(computer);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (computer == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            try
+            {
+                _context.Computer.Remove(computer);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
+            }
         }
 
         private bool ComputerExists(int id)
