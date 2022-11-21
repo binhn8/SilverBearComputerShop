@@ -8277,11 +8277,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Playground\\SilverBearComputerShop\\SilverBearComputerShopTest\\SilverBearComputerShopTest.csproj",
+      "projectUniqueName": "C:\\Playground\\SilverBearComputerShop1\\SilverBearComputerShopTest\\SilverBearComputerShopTest.csproj",
       "projectName": "SilverBearComputerShopTest",
-      "projectPath": "C:\\Playground\\SilverBearComputerShop\\SilverBearComputerShopTest\\SilverBearComputerShopTest.csproj",
+      "projectPath": "C:\\Playground\\SilverBearComputerShop1\\SilverBearComputerShopTest\\SilverBearComputerShopTest.csproj",
       "packagesPath": "C:\\Users\\KimAnh\\.nuget\\packages\\",
-      "outputPath": "C:\\Playground\\SilverBearComputerShop\\SilverBearComputerShopTest\\obj\\",
+      "outputPath": "C:\\Playground\\SilverBearComputerShop1\\SilverBearComputerShopTest\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -8302,8 +8302,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Playground\\SilverBearComputerShop\\SilverBearComputerShop\\SilverBearComputerShop.csproj": {
-              "projectPath": "C:\\Playground\\SilverBearComputerShop\\SilverBearComputerShop\\SilverBearComputerShop.csproj"
+            "C:\\Playground\\SilverBearComputerShop1\\SilverBearComputerShop\\SilverBearComputerShop.csproj": {
+              "projectPath": "C:\\Playground\\SilverBearComputerShop1\\SilverBearComputerShop\\SilverBearComputerShop.csproj"
             }
           }
         }

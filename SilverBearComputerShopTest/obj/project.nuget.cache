@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fw8KxxWsXGwsl2PqCfFxzj+0eeqgu83HYuLqgj30wvuS5kERmCc9CLGyFvcsGmboibJGKGx0kL4WOYb/EaGQLQ==",
+  "dgSpecHash": "PhcjFAB2HbSr4cmvpaGebBhQniBFuUADEX/XXxDg7NRz6igzkswvfcAhwoonzFwJcZMrTL51q2eOaX2LYlF2HQ==",
   "success": true,
-  "projectFilePath": "C:\\Playground\\SilverBearComputerShop\\SilverBearComputerShopTest\\SilverBearComputerShopTest.csproj",
+  "projectFilePath": "C:\\Playground\\SilverBearComputerShop1\\SilverBearComputerShopTest\\SilverBearComputerShopTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\KimAnh\\.nuget\\packages\\microsoft.aspnetcore.diagnostics.entityframeworkcore\\3.1.31\\microsoft.aspnetcore.diagnostics.entityframeworkcore.3.1.31.nupkg.sha512",
     "C:\\Users\\KimAnh\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
