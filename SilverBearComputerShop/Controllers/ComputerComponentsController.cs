@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//I dont refactor this class on purpose for the test. I will do it if this is real application
+
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ using SilverBearComputerShop.Models;
 
 namespace SilverBearComputerShop.Controllers
 {
-    public class ComputerComponentsController : Controller
+	public class ComputerComponentsController : Controller
     {
         private readonly ComputerShopContext _context;
 

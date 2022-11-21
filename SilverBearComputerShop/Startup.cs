@@ -10,6 +10,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using SilverBearComputerShop.Data;
 using Microsoft.EntityFrameworkCore;
+using SilverBearComputerShop.Repositories;
+using SilverBearComputerShop.Models;
 
 namespace SilverBearComputerShop
 {
@@ -25,9 +27,13 @@ namespace SilverBearComputerShop
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddScoped<IRepository<Computer, int>, ComputerRepository>();
+			services.AddScoped<IRepository<Component, int>, ComponentRepository>();
+			services.AddScoped<IRepository<ComponentType, int>, ComponentTypeRepository>();
+			services.AddControllersWithViews();
+
 			services.AddDbContext<ComputerShopContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-			services.AddControllersWithViews();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
