@@ -1,32 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SilverBearComputerShop.Data;
 using SilverBearComputerShop.Models;
+using SilverBearComputerShop.Repositories;
 
 namespace SilverBearComputerShop.Controllers
 {
-    public class ComponentsController : Controller
+	public class ComponentsController : Controller
     {
-        private readonly ComputerShopContext _context;
-
-        public ComponentsController(ComputerShopContext context)
+        private readonly IRepository<Component, int> componentRepository;
+        private readonly IRepository<ComponentType, int> componentTypeRepository;
+        public ComponentsController(IRepository<Component, int> componentRepository
+                                    , IRepository<ComponentType, int> componentTypeRepository
+                                    , ComputerShopContext context)
         {
-            _context = context;
+            this.componentRepository = componentRepository;
+            this.componentTypeRepository = componentTypeRepository;
         }
-
-        // GET: Components
+     
         public async Task<IActionResult> Index()
         {
-            var component = _context.Component.Include(c => c.ComponentType);
-            return View(await component.ToListAsync());
+            var component = await componentRepository.GetAll();
+            return View(component);
         }
 
-        // GET: Components/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,9 +34,8 @@ namespace SilverBearComputerShop.Controllers
                 return NotFound();
             }
 
-            var component = await _context.Component
-                .Include(c => c.ComponentType)
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var component = await componentRepository.GetDetailById((int)id);
+            
             if (component == null)
             {
                 return NotFound();
@@ -45,50 +44,46 @@ namespace SilverBearComputerShop.Controllers
             return View(component);
         }
 
-        // GET: Components/Create
         public IActionResult Create()
         {
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type");
+            IEnumerable<ComponentType> conponentType = componentTypeRepository.GetAll().Result;
+            ViewData["ComponentTypeId"] = new SelectList(conponentType, "ID", "Type");
             return View();
         }
-
-        // POST: Components/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,ComponentTypeId")] Component component)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(component);
-                await _context.SaveChangesAsync();
+                await componentRepository.Insert(component);
+                await componentRepository.Save();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type", component.ComponentTypeId);
+
+            var conponentType = await componentTypeRepository.GetAll();
+            ViewData["ComponentTypeId"] = new SelectList(conponentType, "ID", "Type", component.ComponentTypeId);
             return View(component);
         }
-
-        // GET: Components/Edit/5
+        
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var component = await _context.Component.FindAsync(id);
+            var component = await componentRepository.GetById((int)id);
             if (component == null)
             {
                 return NotFound();
             }
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type", component.ComponentTypeId);
+
+            var conponentType = await componentTypeRepository.GetAll();
+            ViewData["ComponentTypeId"] = new SelectList(conponentType, "ID", "Type", component.ComponentTypeId);
             return View(component);
         }
 
-        // POST: Components/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,ComponentTypeId")] Component component)
@@ -102,8 +97,11 @@ namespace SilverBearComputerShop.Controllers
             {
                 try
                 {
-                    _context.Update(component);
-                    await _context.SaveChangesAsync();
+                    var componentObject = await componentRepository.GetById(id);
+                    componentObject.Name = component.Name;
+                    componentObject.ComponentTypeId = component.ComponentTypeId;
+                    componentObject.ComponentType = component.ComponentType;
+                    await componentRepository.Save();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,21 +116,18 @@ namespace SilverBearComputerShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ComponentTypeId"] = new SelectList(_context.ComponentType, "ID", "Type", component.ComponentTypeId);
+            var conponentType = await componentTypeRepository.GetAll();
+            ViewData["ComponentTypeId"] = new SelectList(conponentType, "ID", "Type", component.ComponentTypeId);
             return View(component);
         }
 
-        // GET: Components/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var component = await _context.Component
-                .Include(c => c.ComponentType)
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var component = await componentRepository.GetById((int)id);
             if (component == null)
             {
                 return NotFound();
@@ -141,20 +136,18 @@ namespace SilverBearComputerShop.Controllers
             return View(component);
         }
 
-        // POST: Components/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var component = await _context.Component.FindAsync(id);
-            _context.Component.Remove(component);
-            await _context.SaveChangesAsync();
+            await componentRepository.Delete(id);
+            await componentRepository.Save();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ComponentExists(int id)
         {
-            return _context.Component.Any(e => e.ID == id);
+            return componentRepository.GetById(id) != null;
         }
     }
 }
