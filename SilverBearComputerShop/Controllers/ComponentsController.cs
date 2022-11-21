@@ -46,7 +46,7 @@ namespace SilverBearComputerShop.Controllers
 
         public IActionResult Create()
         {
-            IEnumerable<ComponentType> conponentType = (IEnumerable<ComponentType>)componentTypeRepository.GetAll();
+            IEnumerable<ComponentType> conponentType = componentTypeRepository.GetAll().Result;
             ViewData["ComponentTypeId"] = new SelectList(conponentType, "ID", "Type");
             return View();
         }

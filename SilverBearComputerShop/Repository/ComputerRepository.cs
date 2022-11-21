@@ -41,7 +41,7 @@ namespace SilverBearComputerShop.Repositories
             IQueryable<Computer> computers;
             if (!string.IsNullOrEmpty(searchString))
             {
-                computers = context.Computer.Where(c => c.Description.Contains(searchString));
+                computers = context.Computer.Where(c => c.Title.Contains(searchString));
                
             }
             else
